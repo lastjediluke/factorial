@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 09/06/2018 10:47:38 AM
+// Create Date: 09/06/2018 05:53:27 PM
 // Design Name: 
-// Module Name: DP
+// Module Name: mult
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,15 +20,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module DP(n, Load_cnt, EN_cnt, CLK, Load_reg, 
-sel1, sel2, cnt, GT, mux1_out, mux2_out, z);
-    parameter size = 32;
-    parameter one = 1;
-    parameter zero = 0;
-    input [3:0] n;
-    //input one, zero;
-    input Load_cnt, EN_cnt, CLK, Load_reg, sel1, sel2;
-    output [3:0] cnt;
-    output GT;
-    output [size-1:0]mux1_out, mux2_out, z;
+module mult(x, y, z);
+    parameter data_width = 32;
+    input [data_width-1:0] x, y;
+    output [data_width-1:0] z;
+    
+    assign z = x*y;
 endmodule

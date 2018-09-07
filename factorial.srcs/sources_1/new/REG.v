@@ -21,7 +21,7 @@
 
 
 module REG(D, Q, CLK, Load_reg);
-    parameter Data_width = 8;
+    parameter Data_width = 32;
     input CLK, Load_reg;
     input [Data_width-1:0] D;
     output reg [Data_width-1:0] Q;

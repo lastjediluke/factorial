@@ -24,6 +24,7 @@ module CU(
     input wire go,
     input wire CLK,
     input wire GT,
+    input wire [3:0]cnt_out,
     output wire [3:0]cs,
     output reg done,
     output reg sel1, sel2, Load_cnt, EN, Load_reg
@@ -49,7 +50,7 @@ module CU(
     
     always@(CS, go) begin
         case (CS)
-            S0: begin
+            S0: begin               
                 if(go) NS = S1;
                 else NS = S0;
             end
@@ -59,7 +60,11 @@ module CU(
             end
             
             S2: begin   //wait state
-                NS = S3;
+                if(cnt_out > 12)begin
+                    $display("Too big of a number");
+                    NS = S0;  
+                end
+                else NS = S3;
             end
             
             S3: begin
@@ -75,6 +80,58 @@ module CU(
                 NS = S0;
             end
                 
+        endcase
+    end
+    
+   /* input wire go,
+        input wire CLK,
+        input wire GT,
+        output wire [3:0]cs,
+        output reg done,
+        output reg sel1, sel2, Load_cnt, EN, Load_reg*/
+        
+    always @ (posedge CLK) begin
+        CS = NS;
+    end
+    
+    always @ (CS, GT) begin
+        case(CS)
+            S0: begin
+                done <= 0; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+            end
+            
+            S1: begin
+                done <= 0; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 1; EN <= 0; Load_reg <= 1;
+            end
+            
+            S2: begin
+                done <= 0; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+            end
+            
+            S3: begin
+                done <= 0; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 1; Load_reg <= 1;
+            end
+            
+            S4: begin
+                done <= 0; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+            end
+            
+            S5: begin
+                done <= 1; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+            end
+            
+            default: begin
+                done <= 0; sel1 <= 0; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+            end
+            
+            
         endcase
     end
     
