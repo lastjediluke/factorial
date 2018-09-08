@@ -1,0 +1,245 @@
+//Hey sorry I barely know how to use git lmfao
+//but here's all of the stuff anyway. Hopefull this isn't too much trouble
+
+//**Top level**
+module factorial(go, in, out, err, rst, CLK, CS);
+input go, rst, CLK;
+input [3:0] in;
+output err;
+output [2:0] CS;
+output [31:0] out;
+
+wire done, s1, s2, LD, LDc, en, gt;
+
+CU CU (.go(go), .clk(CLK), .rst(rst), .CS(CS), .done(done), .gt(gt), .s1(s1), 
+.s2(s2), .LD(LD), .LDc(LDc), .en(en));
+
+DP_top DP (.clk(CLK), .in(in), .s1(s1), .s2(s2), .LD(LD), .LDc(LDc), .en(en), .gt(gt), .out(out));
+
+endmodule
+
+
+//**DP**
+module DP_top(clk, in, s1, s2, LD, LDc, en, gt, out);
+
+input [3:0] in;
+input clk, s1, s2, LD, LDc, en;
+output reg gt;
+output reg [31:0] out;
+
+downCnt U0 ();
+Mux2 U1 ();
+Mux2 U2 ();
+Reg U3 ();
+Mul U4 ();
+comp U5 ();
+
+endmodule
+
+//**CU**
+module CU(go, clk, rst, CS, done, gt, s1, s2, LD, LDc, en);
+
+input go, clk, rst, gt;
+output reg done, s1, s2, LD, LDc, en;
+output reg [2:0] CS;
+reg [2:0] NS;
+
+always@(CS, go)
+begin
+    case(CS)
+    3'b000: //0, idle
+    begin
+        if (go == 0)
+        begin
+            NS = 3'b000;
+        end
+        if (go == 1)
+        begin
+            NS = 3'b001;
+        end
+    end
+    
+    3'b001: //1
+    begin
+        NS = 3'b010;
+    end
+    
+    3'b010: //2
+    begin
+        NS = 3'b011;
+    end
+    
+    3'b011: //3, wait
+    begin
+        NS = 3'b100;
+    end
+    
+    3'b100: //4
+    begin
+        if(gt == 0)
+        begin
+            NS = 3'b011; //3
+        end
+        if(gt == 1)
+        begin
+            NS = 3'b101; //5
+        end
+    end
+    
+    3'b101: //5, done
+    begin
+        NS = 3'b000;
+    end
+    
+    endcase
+end
+
+always@ (posedge clk)
+begin
+CS <= NS;
+end
+
+always@(CS, go)
+begin
+    case(CS)
+    3'b000: //0, idle
+    begin
+    done = 0;
+    s1 = 0;
+    s2 = 0;
+    LD = 0;
+    LDc = 0;
+    en = 0;
+    CS = 3'b000;
+    end
+
+    3'b001: //1
+    begin
+    done = 0;
+    s1 = 1;
+    s2 = 0;
+    LD = 1;
+    LDc = 1;
+    en = 1;
+    CS = 3'b001;
+    end
+
+    3'b010: //2
+    begin
+    done = 0;
+    s1 = 0;
+    s2 = 0;
+    LD = 0;
+    LDc = 0;
+    en = 1;
+    CS = 3'b010;
+    end
+
+    3'b011: //3, wait
+    begin
+    done = 0;
+    s1 = 0;
+    s2 = 0;
+    LD = 0;
+    LDc = 0;
+    en = 0;
+    CS = 3'b011;
+    end
+
+    3'b100: //4
+    begin
+    done = 0;
+    s1 = 0;
+    s2 = 0;
+    LD = 1;
+    LDc = 0;
+    en = 1;
+    CS = 3'b100;
+    end
+
+    3'b101: //5, done
+    begin
+    done = 0;
+    s1 = 0;
+    s2 = 1;
+    LD = 0;
+    LDc = 0;
+    en = 0;
+    CS = 3'b101;
+    end
+
+    endcase
+end
+
+endmodule
+
+//**Down Counter
+module downCnt(d, LDc, en, clk, q);
+
+input [3:0] d;
+input LDc, en, clk;
+output reg [31:0] q;
+
+always@(posedge clk)
+begin
+    if (en) q <= q - 1;
+    if (LDc) q <= d; 
+end
+endmodule
+
+//**2 input Mux**
+module Mux2(in1, in2, s, out);
+
+input[3:0] in1;
+input [31:0] in2; 
+input s; 
+output reg[31:0] out;
+
+always@ (in1, in2, s) 
+begin 
+    if(s == 1)
+    out = in1;
+    if(s == 0) 
+    out = in2; 
+end 
+endmodule
+
+//**Multiplier**
+module Mul(x, y, z);
+
+input [31:0] x, y;
+output reg [31:0] z;
+
+always@(*)
+begin
+z = x * y;
+end
+endmodule
+
+//**Register**
+module Reg(clk, d, ld, q);
+
+input clk, ld;
+input [3:0] d;
+output reg [31:0] q;
+    
+always @(posedge clk)
+begin
+    if(ld) q <= d;
+    else q <= q;
+end
+endmodule
+
+//**Comparator**
+module comp(a, b, gt);
+
+input [31:0] a, b;
+output reg gt;
+
+always@(*)
+begin
+    if(a < b)
+        gt = 1;
+end
+
+endmodule
