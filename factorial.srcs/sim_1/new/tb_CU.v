@@ -46,7 +46,7 @@ module tb_CU();
         tick;
         tick;
         tick;
-        cnt_out = 13;
+        cnt_out = 4;
         tick;
         tick;
         tick;

@@ -28,8 +28,8 @@ module CNT(D, Load_cnt, EN, CLK, Q);
     
     always @ (posedge CLK)
         begin
-            if(!EN) Q = Q;
-            else if (Load_cnt) Q = D;
-            else Q = Q - 1;
+            if (Load_cnt) Q = D;
+            if (EN) Q = Q-1;
+            if (!EN && !Load_cnt) Q = Q;       
         end 
 endmodule

@@ -59,7 +59,7 @@ module CU(
                 NS = S2;
             end
             
-            S2: begin   //wait state
+            S2: begin   //countdown
                 if(cnt_out > 12)begin
                     $display("Too big of a number");
                     NS = S0;  
@@ -70,6 +70,10 @@ module CU(
             S3: begin
                 NS = S4;
             end
+            
+           /* S6: begin
+                NS = S4;
+            end */
             
             S4: begin   //wait state
                 if(GT)NS = S2;
@@ -106,23 +110,28 @@ module CU(
                 Load_cnt <= 1; EN <= 0; Load_reg <= 1;
             end
             
-            S2: begin
-                done <= 0; sel1 <= 0; sel2 <= 0; 
+            S2: begin   //wait
+                done <= 0; sel1 <= 1; sel2 <= 0; 
                 Load_cnt <= 0; EN <= 0; Load_reg <= 0;
             end
             
             S3: begin
-                done <= 0; sel1 <= 0; sel2 <= 0; 
-                Load_cnt <= 0; EN <= 1; Load_reg <= 1;
+                done <= 0; sel1 <= 1; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 1;
             end
             
-            S4: begin
-                done <= 0; sel1 <= 0; sel2 <= 0; 
-                Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+            /*S6: begin   //wait after we load the reg
+                done <= 0; sel1 <= 1; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 0; Load_reg <= 1;
+            end*/
+            
+            S4: begin       //start downcounting
+                done <= 0; sel1 <= 1; sel2 <= 0; 
+                Load_cnt <= 0; EN <= 1; Load_reg <= 0;
             end
             
-            S5: begin
-                done <= 1; sel1 <= 0; sel2 <= 0; 
+            S5: begin       //output stage
+                done <= 1; sel1 <= 1; sel2 <= 1; 
                 Load_cnt <= 0; EN <= 0; Load_reg <= 0;
             end
             

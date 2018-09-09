@@ -21,9 +21,10 @@
 
 
 module MUX(sel, in1, in2, out);
-    parameter Data_width = 8;
+    parameter Data_width = 32;
     input sel;
-    input [Data_width-1:0] in1, in2;
+    input [Data_width-1:0]in2;
+    input in1;
     output reg[Data_width-1:0] out;
     
     always @ (in1, in2, sel)

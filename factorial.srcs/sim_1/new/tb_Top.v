@@ -20,7 +20,44 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module tb_Top(
-
-    );
+module tb_Top();
+    
+    parameter size = 32;
+    wire Done;
+    wire [size-1:0] result;
+    wire [3:0] CS;
+    reg CLK, Go;
+    reg [3:0] n;
+    integer i;
+    //wire [3:0] cnt_out;
+    
+    
+    //module Top(CLK, Go, n, Done, CS, result);
+    
+    Top DUT (CLK, Go, n, Done, result);
+    
+    initial begin
+        CLK = 0;
+        Go = 1;
+        n = 12;
+        i = 0;
+        
+        tick;
+        tick;
+        Go = 0;
+        
+        while ( i < 100) begin
+            tick;
+            i = i + 1;
+        end
+        
+    end
+    
+    task tick;
+        begin
+        #5 CLK = 1;
+        #5 CLK = 0;
+        end
+    endtask
+    
 endmodule

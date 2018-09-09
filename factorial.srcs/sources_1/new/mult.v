@@ -22,8 +22,11 @@
 
 module mult(x, y, z);
     parameter data_width = 32;
-    input [data_width-1:0] x, y;
-    output [data_width-1:0] z;
+    input [data_width-1:0] y;
+    input [3:0] x;
+    output reg[data_width-1:0] z;
     
-    assign z = x*y;
+    always @ (x or y) begin
+        z = x*y;
+    end
 endmodule
