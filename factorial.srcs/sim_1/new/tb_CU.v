@@ -26,10 +26,10 @@
     output reg done,
     output reg sel1, sel2, Load_cnt, EN, Load_reg*/
 module tb_CU();
-    reg go, CLK, GT;
+    reg go, CLK, GT, GT12;
     reg[3:0] cnt_out;
     wire[3:0] cs;
-    wire done, sel1, sel2, Load_cnt, EN, Load_reg;
+    wire done, sel1, sel2, Load_cnt, EN, Load_reg, err;
     
     CU DUT (go, CLK, GT, cnt_out, cs, done, sel1, sel2, Load_cnt, EN, Load_reg);
     initial begin

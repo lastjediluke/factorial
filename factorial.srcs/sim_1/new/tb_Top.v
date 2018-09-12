@@ -29,27 +29,65 @@ module tb_Top();
     reg CLK, Go;
     reg [3:0] n;
     integer i;
+    integer x;
     //wire [3:0] cnt_out;
     
     
     //module Top(CLK, Go, n, Done, CS, result);
     
-    Top DUT (CLK, Go, n, Done, result);
+    Top DUT (CLK, Go, n, Done, err, result);
     
     initial begin
         CLK = 0;
+        x = 0;
+        n = 1;
         Go = 1;
-        n = 12;
-        i = 0;
-        
+        tick;
+        tick;
+        tick;
         tick;
         tick;
         Go = 0;
         
-        while ( i < 100) begin
+        CLK = 0;
+        
+        n = 12;
+        Go = 1;
+        
+        while (x < 50) begin
+            tick;
+            x = x+1;
+        end
+        
+        Go = 0;
+        n = 13;
+        Go = 1;
+        tick;
+        tick;
+        tick;
+        tick;
+        
+        
+        
+       /* for (i = 0; i < 14; i = i + 1) begin
+            n = i;
+            CLK = 0;
+            Go = 1;
+            tick;
+            tick;
+            tick;
+            Go = 0;
+            
+            *//*while (x < 50) begin
+                tick;
+                x = x + 1;
+            end
+            x = 0;*//*
+        end*/
+        /*while ( i < 100 ) begin
             tick;
             i = i + 1;
-        end
+        end*/
         
     end
     

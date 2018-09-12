@@ -21,7 +21,7 @@
 
 
 module DP(n, Load_cnt, EN_cnt, CLK, Load_reg, 
-sel1, sel2, GT, mux2_out, cnt_out);     //cnt_out may be an issue
+sel1, sel2, GT, mux2_out, cnt_out, GT12);     //cnt_out may be an issue
     parameter size = 32;
     parameter one = 1;
     parameter zero = 0;
@@ -29,7 +29,7 @@ sel1, sel2, GT, mux2_out, cnt_out);     //cnt_out may be an issue
     //input one, zero;
     input Load_cnt, EN_cnt, CLK, Load_reg, sel1, sel2;
     
-    output GT;
+    output GT, GT12;
     output [size-1:0]mux2_out;
     wire [size-1:0] reg_out, mux1_out, z;
     output wire [3:0] cnt_out;
@@ -41,6 +41,8 @@ sel1, sel2, GT, mux2_out, cnt_out);     //cnt_out may be an issue
     CNT cnt (n, Load_cnt, EN_cnt, CLK, cnt_out);
     
     CMP cmp (cnt_out, 4'b0001, GT);
+    
+    CMP cmp12 (cnt_out, 4'b1100, GT12);
     
     mult multiplier(cnt_out, reg_out, z);
     

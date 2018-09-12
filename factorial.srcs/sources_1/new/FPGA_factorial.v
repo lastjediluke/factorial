@@ -20,11 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module FPGA_factorial(clk100MHZ, go, rst, n, LEDSEL, LEDOUT, done, button);
+module FPGA_factorial(clk100MHZ, go, rst, n, LEDSEL, LEDOUT, done, err, button);
     supply1 [7:0] vcc;
     input clk100MHZ, go, button, rst;
     input [3:0] n;
-    output done;
+    output done, err;
     output [7:0] LEDSEL, LEDOUT;
     
     wire DONT_USE, clk5KHZ;
@@ -40,13 +40,14 @@ module FPGA_factorial(clk100MHZ, go, rst, n, LEDSEL, LEDOUT, done, button);
     wire [3:0] dig6;     
     wire [3:0] dig7;
     
+    
     wire [7:0] s0, s1, s2, s3, s4, s5, s6, s7;
     
-    clk_gen CLK (clk100MHZ, DONT_USE, clk5KHZ);
+    clk_gen CLK (clk100MHZ, rst, DONT_USE, clk5KHZ);
     
     button_debouncer MCLK (clk5KHZ, button, debounced_button);
     
-    Top factorial (debounced_button, go, n, done, outputLED);
+    Top factorial (debounced_button, go, n, done, err, outputLED);
     
     bin2bcd32 convert (outputLED, dig0, dig1, dig2, dig3, dig4, dig5,
                         dig6, dig7);

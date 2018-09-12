@@ -20,12 +20,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Top(CLK, Go, n, Done, result);
+module Top(CLK, Go, n, Done, err, result);
     
     parameter size = 32;
     input Go, CLK;
     input [3:0] n;
-    output Done;
+    output Done, err;
     wire [3:0] CS;
     output [size-1:0] result;
     
@@ -43,7 +43,7 @@ module Top(CLK, Go, n, Done, result);
         output reg sel1, sel2, Load_cnt, EN, Load_reg
         ); */
     
-    CU cu (Go, CLK, GT, cnt_out, CS, Done, sel1, sel2, 
+    CU cu (Go, CLK, GT, GT12, cnt_out, CS, Done, err, sel1, sel2, 
     Load_cnt, EN_cnt, Load_reg);
     
     
@@ -51,7 +51,7 @@ module Top(CLK, Go, n, Done, result);
     sel1, sel2, GT, mux2_out);*/
     
     DP dp (n, Load_cnt, EN_cnt, CLK, Load_reg, sel1,
-    sel2, GT, result, cnt_out);
+    sel2, GT, result, cnt_out, GT12);
 
 
 endmodule

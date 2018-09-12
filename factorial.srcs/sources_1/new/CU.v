@@ -23,10 +23,10 @@
 module CU(
     input wire go,
     input wire CLK,
-    input wire GT,
+    input wire GT, GT12,
     input wire [3:0]cnt_out,
     output wire [3:0]cs,
-    output reg done,
+    output reg done, err,
     output reg sel1, sel2, Load_cnt, EN, Load_reg
     );
     
@@ -60,9 +60,17 @@ module CU(
             end
             
             S2: begin   //countdown
-                if(cnt_out > 12)begin
+                NS = S6;
+            end
+            
+            S6: begin       //wait
+                
+                if(GT12)begin
                     $display("Too big of a number");
                     NS = S0;  
+                end
+                else if ((cnt_out == 1)||(cnt_out == 0)) begin
+                    NS = S5;
                 end
                 else NS = S3;
             end
@@ -98,45 +106,52 @@ module CU(
         CS = NS;
     end
     
-    always @ (CS, GT) begin
+    always @ (CS, GT, GT12) begin
         case(CS)
             S0: begin
-                done <= 0; sel1 <= 0; sel2 <= 0; 
+                done <= 0; sel1 <= 0; sel2 <= 0; err <= 0;
                 Load_cnt <= 0; EN <= 0; Load_reg <= 0;
             end
             
             S1: begin
-                done <= 0; sel1 <= 0; sel2 <= 0; 
+                done <= 0; sel1 <= 0; sel2 <= 0; err <= 0;
                 Load_cnt <= 1; EN <= 0; Load_reg <= 1;
             end
             
             S2: begin   //wait
-                done <= 0; sel1 <= 1; sel2 <= 0; 
+                done <= 0; sel1 <= 1; sel2 <= 0; err <= 0;
                 Load_cnt <= 0; EN <= 0; Load_reg <= 0;
             end
             
             S3: begin
-                done <= 0; sel1 <= 1; sel2 <= 0; 
+                done <= 0; sel1 <= 1; sel2 <= 0; err <= 0;
                 Load_cnt <= 0; EN <= 0; Load_reg <= 1;
             end
             
-            /*S6: begin   //wait after we load the reg
-                done <= 0; sel1 <= 1; sel2 <= 0; 
-                Load_cnt <= 0; EN <= 0; Load_reg <= 1;
-            end*/
+            S6: begin   //wait after we load the reg
+                if (GT12) begin
+                    done <= 0; sel1 <= 1; sel2 <= 0; err <= 1;
+                    Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+                end
+                
+                else begin
+                    done <= 0; sel1 <= 1; sel2 <= 0; err <= 0;
+                    Load_cnt <= 0; EN <= 0; Load_reg <= 0;
+                end
+            end
             
             S4: begin       //start downcounting
-                done <= 0; sel1 <= 1; sel2 <= 0; 
+                done <= 0; sel1 <= 1; sel2 <= 0; err <= 0;
                 Load_cnt <= 0; EN <= 1; Load_reg <= 0;
             end
             
             S5: begin       //output stage
-                done <= 1; sel1 <= 1; sel2 <= 1; 
+                done <= 1; sel1 <= 1; sel2 <= 1; err <= 0;
                 Load_cnt <= 0; EN <= 0; Load_reg <= 0;
             end
             
             default: begin
-                done <= 0; sel1 <= 0; sel2 <= 0; 
+                done <= 0; sel1 <= 0; sel2 <= 0; err <= 0;
                 Load_cnt <= 0; EN <= 0; Load_reg <= 0;
             end
             
